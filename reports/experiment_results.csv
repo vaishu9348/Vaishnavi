@@ -1,6 +1,7 @@
 method,epsilon,actual_top_stage,estimated_top_stage,top_stage_correct,actual_abandonment,estimated_abandonment,absolute_error,percentage_error,ranking_agreement,suppression_rate,runtime_seconds,trial_count
 Non-Private Baseline,0.0,Document Upload,Document Upload,1.0,0.341,0.341,0.0,0.0,1.0,0.0,0.015,1
-"Differential Privacy (Laplace, eps=0.1)",0.1,Document Upload,Document Upload,1.0,0.341,0.3415,0.0005,246.69,0.9952,0.0,0.7697,5
-"Differential Privacy (Laplace, eps=0.5)",0.5,Document Upload,Document Upload,1.0,0.341,0.3408,0.0002,40.49,0.9952,0.0,1.2681,5
-"Differential Privacy (Laplace, eps=1.0)",1.0,Document Upload,Document Upload,1.0,0.341,0.341,0.0,15.26,0.9964,0.0,0.7883,5
-"Differential Privacy (Laplace, eps=2.0)",2.0,Document Upload,Document Upload,1.0,0.341,0.3409,0.0001,15.13,0.9952,0.0,0.6494,5
+"Differential Privacy (Laplace, eps=0.1)",0.1,Document Upload,Document Upload,1.0,0.341,0.3405,0.0005,351.02,0.9958,0.2156,0.0677,20
+"Differential Privacy (Laplace, eps=0.25)",0.25,Document Upload,Document Upload,1.0,0.341,0.3407,0.0003,72.72,0.9964,0.2625,0.0679,20
+"Differential Privacy (Laplace, eps=0.5)",0.5,Document Upload,Document Upload,1.0,0.341,0.3407,0.0003,37.96,0.9967,0.2812,0.0674,20
+"Differential Privacy (Laplace, eps=0.75)",0.75,Document Upload,Document Upload,1.0,0.341,0.3409,0.0001,47.25,0.997,0.2812,0.0647,20
+"Differential Privacy (Laplace, eps=1.0)",1.0,Document Upload,Document Upload,1.0,0.341,0.341,0.0,20.9,0.9967,0.2796,0.0666,20

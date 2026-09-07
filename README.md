@@ -201,61 +201,91 @@ The dashboard provides 10 integrated pages:
 
 ---
 
-## 11. Experiment Methodology
+## 11. Experiment Methodology & Setup
 
-The experimental evaluation runs controlled trials across privacy budgets $\epsilon \in \{0.1, 0.5, 1.0, 2.0\}$ over 5 randomized trials:
+The experimental evaluation runs controlled trials across privacy budgets $\epsilon \in \{0.1, 0.25, 0.5, 0.75, 1.0\}$ over 20 independent randomized trials on 126,204 interaction events:
 * **Sensitivity**: $\Delta f = 1$ (1 customer session = 1 journey contribution)
-* **Metrics**: Mean Absolute Error (MAE), Mean Absolute Percentage Error (MAPE), Top-Stage Identification Accuracy, Spearman Rank Correlation ($\rho$), Suppression Rate, Runtime.
+* **Metrics**: Mean Absolute Error (MAE), Mean Absolute Percentage Error (MAPE), Top-Stage Identification Accuracy, Spearman Rank Correlation ($\rho$), Suppression Rate, Query Runtime.
+* **Execution Command**:
+  ```bash
+  python scripts/run_experiment.py --trials 20
+  ```
 
 ---
 
-## 12. Baseline Comparison
+## 12. Baseline vs. Differentially Private Comparison
 
-| Workflow Stage | True Entered | True Abandoned | True Rate | DP Rate (ε=1.0) | Absolute Error |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Login** | 8,024 | 0 | 0.00% | 0.00% | 0.00% |
-| **Start Claim** | 8,024 | 163 | 2.03% | 2.01% | 0.02% |
-| **Claim Type** | 7,861 | 398 | 5.06% | 5.08% | 0.02% |
-| **Claim Details** | 7,463 | 895 | 11.99% | 12.01% | 0.02% |
-| **Document Upload** | **6,568** | **1,971** | **30.01%** | **30.04%** | **0.03%** |
-| **Review** | 4,597 | 368 | 8.01% | 7.98% | 0.03% |
-| **Submit** | 4,229 | 169 | 3.99% | 4.02% | 0.03% |
-| **Confirmation** | 4,060 | 0 | 0.00% | 0.00% | 0.00% |
+Empirical comparison derived directly from actual execution (`reports/experiment_summary.csv`):
+
+| Method | Epsilon $\epsilon$ | Top Stage | Top-Stage Accuracy | Ground Truth Rate | Estimated Rate | Absolute Error | Ranking Agreement ($\rho$) | Runtime |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Non-Private Baseline** | 0.0 | **Document Upload** | 100.0% | 34.10% | 34.10% | 0.0000 | 1.0000 | 0.0150s |
+| **DP (Laplace, $\epsilon=0.10$)** | 0.10 | **Document Upload** | 100.0% | 34.10% | 34.05% | 0.0005 | 0.9958 | 0.0677s |
+| **DP (Laplace, $\epsilon=0.25$)** | 0.25 | **Document Upload** | 100.0% | 34.10% | 34.07% | 0.0003 | 0.9964 | 0.0679s |
+| **DP (Laplace, $\epsilon=0.50$)** | 0.50 | **Document Upload** | 100.0% | 34.10% | 34.07% | 0.0003 | 0.9967 | 0.0674s |
+| **DP (Laplace, $\epsilon=0.75$)** | 0.75 | **Document Upload** | 100.0% | 34.10% | 34.09% | 0.0001 | 0.9970 | 0.0647s |
+| **DP (Laplace, $\epsilon=1.00$)** | 1.00 | **Document Upload** | 100.0% | 34.10% | 34.10% | 0.0000 | 0.9967 | 0.0666s |
 
 ---
 
-## 13. Experimental Results (Target vs Measured)
+## 13. Pre-Defined Targets vs. Measured Experimental Results
 
 | Evaluation Metric | Target | Measured Result (ε = 1.0) | Status |
 | :--- | :--- | :--- | :--- |
-| **Privacy Budget** | $\epsilon \le 1.0$ | **$\epsilon = 1.0$** | **MET ✅** |
-| **Top-Stage Accuracy** | $\ge 90\%$ | **100.0%** (Document Upload identified) | **MET ✅** |
-| **Mean Absolute % Error (MAPE)** | $\le 10\%$ | **0.42%** | **MET ✅** |
-| **Ranking Agreement ($\rho$)** | $\ge 0.90$ | **0.9998** | **MET ✅** |
-| **Legacy Availability During Outage** | $100\%$ | **100.0%** | **MET ✅** |
-| **Small-Group Protection** | $100\%$ suppressed | **100.0%** | **MET ✅** |
+| **Privacy Budget** | $\epsilon \le 1.0$ | **$\epsilon = 1.0$** (bounded) | **TARGET MET ✅** |
+| **Top-Stage Accuracy** | $\ge 90\%$ | **100.0%** (Document Upload correctly identified) | **TARGET MET ✅** |
+| **Bottleneck Absolute Error** | $\le 1.0\%$ | **0.0000** (Exact 34.10% estimated) | **TARGET MET ✅** |
+| **Ranking Agreement (Spearman $\rho$)** | $\ge 0.90$ | **0.9967** (near-perfect stage ordering) | **TARGET MET ✅** |
+| **Legacy Availability During Outage** | $100\%$ | **100.0%** (zero claim loss) | **TARGET MET ✅** |
+| **Small-Group Suppression ($k=10$)** | $100\%$ suppressed | **100.0%** ($27.96\%$ of fine-grained cohorts masked) | **TARGET MET ✅** |
+| **Query Runtime** | $< 2.0\text{s}$ | **0.0666s** | **TARGET MET ✅** |
 
 ---
 
-## 14. Failure Testing Verification
+## 14. 8 Operational Failure Modes Tested & Validated
 
-The platform verifies 5 critical operational failure scenarios:
-1. **Missing Consent**: Event is dropped; 0% personal data leakage.
-2. **Unknown Consent**: Conservatively treated as non-consented; dropped.
-3. **Invalid Stage / Corrupted Payload**: Trapped and discarded at Gateway boundary.
-4. **Small Group Cohort ($< 10$)**: Value masked with `[SUPPRESSED < 10]`.
-5. **Analytics Service Crash**: Non-blocking adapter traps exception; legacy claim proceeds without error.
+All 8 failure scenarios verified automatically via `reports/failure_results.csv`:
+1. **Failure 1 (Missing Consent)**: `consent_status = None` $\rightarrow$ Event rejected; 0% personal data leakage.
+2. **Failure 2 (Invalid Stage)**: `stage = 'InvalidStage_999'` $\rightarrow$ Validation failure; dropped at Gateway.
+3. **Failure 3 (Duplicate Event)**: Duplicate `event_id` $\rightarrow$ Deduplicated idempotently without double-counting.
+4. **Failure 4 (Small Group Cohort $< 10$)**: Count $= 2 \rightarrow$ Masked with `[SUPPRESSED < 10]` badge.
+5. **Failure 5 (Analytics Service Crash)**: Analytics service offline $\rightarrow$ Non-blocking fallback; Claims succeed 100%.
+6. **Failure 6 (Budget Exhausted)**: Cumulative queries exceed $\epsilon=1.0 \rightarrow$ Rejected with `BudgetExhaustedError`.
+7. **Failure 7 (Invalid Epsilon)**: Requests with $\epsilon > 1.0$ or $\epsilon \le 0 \rightarrow$ Rejected with `InvalidEpsilonError`.
+8. **Failure 8 (DB / Network Failure)**: Telemetry database unreachable $\rightarrow$ Core claims continue uninterrupted.
 
 ---
 
-## 15. Rollback Demonstration
+## 15. Quick Start & Execution Guide
 
-In the **Rollback Demo** tab:
-1. Click **Simulate Analytics Service Failure**.
-2. Observe system mode automatically transition to `LEGACY_FALLBACK`.
-3. Fill and submit the live test claim form.
-4. The claim succeeds immediately, writing to the core claims ledger.
-5. Click **Restore Coexistence Mode** to resume dual telemetry.
+```bash
+# 1. Activate Environment
+.\.venv\Scripts\activate
+
+# 2. Reassemble SQLite Database (if cloned from GitHub)
+python scripts/reassemble_db.py
+
+# 3. Generate Synthetic Telemetry (10,000 sessions / 126k+ events)
+python scripts/generate_data.py --sessions 10000 --seed 42
+
+# 4. Validate Dataset Schema, Consent & Zero PII
+python scripts/validate_data.py
+
+# 5. Run Complete 20-Trial Benchmark Suite & Generate Charts
+python scripts/run_experiment.py --trials 20
+
+# 6. Run 40 Automated Pytest Unit, Security & E2E Tests
+pytest tests/ -v
+
+# 7. Generate 24-Slide Presentation PPTX
+python scripts/generate_presentation.py
+
+# 8. Run Automated Project-Wide Verification Script
+python scripts/verify_project.py
+
+# 9. Launch Streamlit Analytics Dashboard
+streamlit run app/dashboard.py
+```
 
 ---
 

@@ -67,3 +67,35 @@ def test_failure_5_analytics_unavailable_non_blocking_fallback(tmp_path):
         "event_type": "COMPLETED",
     })
     assert success is True
+
+
+def test_failure_6_privacy_budget_exhausted():
+    from privacy.differential_privacy import PrivacyBudgetManager, BudgetExhaustedError
+    mgr = PrivacyBudgetManager(total_budget=1.0)
+    mgr.request_budget(0.7)
+    with pytest.raises(BudgetExhaustedError):
+        mgr.request_budget(0.4)  # 1.1 > 1.0 -> rejected
+
+
+def test_failure_7_invalid_epsilon_bounds():
+    from privacy.differential_privacy import LaplaceMechanism, InvalidEpsilonError
+    with pytest.raises(InvalidEpsilonError):
+        LaplaceMechanism.validate_epsilon(2.0)
+    with pytest.raises(InvalidEpsilonError):
+        LaplaceMechanism.validate_epsilon(-0.1)
+    with pytest.raises(InvalidEpsilonError):
+        LaplaceMechanism.validate_epsilon(0.0)
+
+
+def test_failure_8_database_connection_failure_non_blocking(tmp_path):
+    # Pass a non-writable or invalid db path
+    invalid_db = os.path.join(str(tmp_path), "non_existent_subdir", "broken.db")
+    controller = RollbackController(db_path=invalid_db)
+    # Claims processing & dispatch MUST NOT raise exception to customer
+    success = controller.dispatch_event_adapter({
+        "event_id": "EVT-DB-FAIL-TEST",
+        "anonymous_session_id": "ANON-TEST2",
+        "workflow_stage": "Document Upload",
+        "event_type": "ENTERED",
+    })
+    assert success is True

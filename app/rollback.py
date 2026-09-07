@@ -94,6 +94,10 @@ class RollbackController:
                 "SUCCESS"
             )
 
+    def restore_analytics_service(self, target_mode: SystemMode = SystemMode.COEXISTENCE, actor: str = "ADMIN"):
+        """Alias for restore_services."""
+        return self.restore_services(target_mode=target_mode, actor=actor)
+
     def record_claim_processed(self, is_outage: bool = False):
         """Records a successful claim submission during normal or degraded mode."""
         if self._analytics_simulated_failed or is_outage:
@@ -158,5 +162,8 @@ class RollbackController:
             pass
 
 
-# Global rollback controller singleton
+# Singleton global controller instance
 global_rollback_controller = RollbackController()
+
+# Alias for CoexistenceController
+CoexistenceController = RollbackController

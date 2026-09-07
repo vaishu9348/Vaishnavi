@@ -120,6 +120,10 @@ class PrivacyBudgetManager:
             except Exception:
                 pass
 
+    def get_remaining_budget(self) -> float:
+        """Returns the remaining privacy epsilon budget."""
+        return self.get_status()["remaining_budget"]
+
     def get_status(self) -> Dict[str, Any]:
         """Returns the current ledger status of the privacy budget."""
         with self._lock:

@@ -1,0 +1,11 @@
+check_name,status,details,severity
+Required Columns Present,PASS,All 4 columns present,CRITICAL
+Zero PII Fields,FAIL,"Disallowed PII columns: ['stage_name', 'email', 'policy_number']",CRITICAL
+Valid Workflow Stages,PASS,100% of stage names match valid 8-stage schema (1 unique stages),HIGH
+Valid Event Types,PASS,All event types valid ({'ENTERED': np.int64(1)}),HIGH
+Valid Consent States,PASS,All consent states valid ({'CONSENTED': np.int64(1)}),CRITICAL
+Session ID Completeness,PASS,Zero null session IDs (1 distinct sessions),HIGH
+Unique Event IDs,PASS,Zero duplicate event IDs across 1 events,MEDIUM
+Valid Portal Versions,PASS,Valid portal versions ({'v2.1': np.int64(1)}),MEDIUM
+"Volume Threshold (>=10k sessions, >=50k events)",FAIL,"1 sessions, 1 events generated",HIGH
+Anonymous Session Format (ANON-XXXX-XXXX),PASS,All session IDs follow salted pseudonymous hash format,CRITICAL

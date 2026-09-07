@@ -106,6 +106,7 @@ def run_privacy_preserving_analytics(
     runtime = round(time.perf_counter() - start_time, 4)
 
     return {
+        "success": True,
         "private_df": df_private,
         "suppressed_display_df": suppression_output["suppressed_df"],
         "baseline_df": df_baseline,

@@ -23,8 +23,8 @@ from app.analytics import run_privacy_preserving_analytics
 
 def run_evaluation_experiment(
     df_events: pd.DataFrame,
-    epsilon_levels: List[float] = [0.1, 0.5, 1.0, 2.0],
-    num_trials: int = 5,
+    epsilon_levels: List[float] = [0.1, 0.25, 0.5, 0.75, 1.0],
+    num_trials: int = 20,
     min_group_size: int = 10,
     seed_base: int = 100
 ) -> pd.DataFrame:

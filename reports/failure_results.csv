@@ -1,6 +1,9 @@
 scenario,category,input,expected,actual,passed,impact
-Failure 1: Missing Consent,Consent Enforcement,consent_status = None,REJECTED (False),REJECTED (False),True,None. Secure default protects customer.
-Failure 2: Unknown Consent,Consent Enforcement,consent_status = UNKNOWN,REJECTED (False),REJECTED (False),True,None. Conservative fail-safe design.
-Failure 3: Small Group Inference,Suppression Protection,count = 2 (Threshold = 10),SUPPRESSED,[SUPPRESSED < 10],True,Result masked. Protects individual identity.
-Failure 4: Privacy Budget Abuse,Security Controls,epsilon = 100.0,InvalidEpsilonError REJECTED,InvalidEpsilonError REJECTED,True,Blocked. Prevents noisy de-anonymisation.
-Failure 5: Privacy Budget Exhaustion,Security Controls,Cumulative queries exceed ε=1.0,BudgetExhaustedError REJECTED,BudgetExhaustedError REJECTED,True,Analytics halted. Privacy guarantee maintained.
+Failure 1: Missing Consent,Consent Enforcement,consent_status = None,REJECTED (False),REJECTED (False),True,Event dropped. Zero PII telemetry ingestion.
+Failure 2: Invalid Workflow Stage,Data Validation,stage = 'InvalidStage_999',Validation Failure (False),Validation Failure (False),True,Corrupted schema rejected before ingestion.
+Failure 3: Duplicate Event,Event Ingestion,Duplicate event_id 'EVT-DUP-001',Deduplicated / Idempotent,Deduplicated (1 record remaining),True,Prevents double-counting in aggregation.
+Failure 4: Small Group Cohort (<10),Suppression Protection,cohort_count = 2 (Threshold k=10),SUPPRESSED,[SUPPRESSED < 10],True,Result masked. Protects individual customer identity.
+Failure 5: Analytics Service Unavailable,Legacy Fallback,Analytics service crashed / offline,Non-blocking fallback (Claims 100% OK),Claims Processed: True,True,Claim processing continues with zero downtime.
+Failure 6: Privacy Budget Exhausted,Differential Privacy,Cumulative queries exceed epsilon total=1.0,BudgetExhaustedError REJECTED,BudgetExhaustedError REJECTED,True,Analytics halted. Differential privacy guarantee maintained.
+Failure 7: Invalid Epsilon Bounds,Differential Privacy,epsilon = 2.5 or epsilon = -0.5,InvalidEpsilonError REJECTED,InvalidEpsilonError REJECTED,True,Prohibits unsafe privacy parameters.
+Failure 8: DB/Analytics Connection Failure,Coexistence Resilience,Database or network timeout during telemetry dispatch,Non-blocking isolation (Claims continue),Claims Processed: True,True,Customer claims never interrupted by telemetry network errors.
