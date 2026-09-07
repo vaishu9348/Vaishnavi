@@ -1,0 +1,6 @@
+scenario,category,input,expected,actual,passed,impact
+Failure 1: Missing Consent,Consent Enforcement,consent_status = None,REJECTED (False),REJECTED (False),True,None. Secure default protects customer.
+Failure 2: Unknown Consent,Consent Enforcement,consent_status = UNKNOWN,REJECTED (False),REJECTED (False),True,None. Conservative fail-safe design.
+Failure 3: Small Group Inference,Suppression Protection,count = 2 (Threshold = 10),SUPPRESSED,[SUPPRESSED < 10],True,Result masked. Protects individual identity.
+Failure 4: Privacy Budget Abuse,Security Controls,epsilon = 100.0,InvalidEpsilonError REJECTED,InvalidEpsilonError REJECTED,True,Blocked. Prevents noisy de-anonymisation.
+Failure 5: Privacy Budget Exhaustion,Security Controls,Cumulative queries exceed ε=1.0,BudgetExhaustedError REJECTED,BudgetExhaustedError REJECTED,True,Analytics halted. Privacy guarantee maintained.

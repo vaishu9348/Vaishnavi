@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Environment Variables
+.env
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Database files
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Large DB file (split into .part files for GitHub 25MB limit)
+# Run: python scripts/reassemble_db.py to reconstruct
+data/synthetic/insurance_portal.db
+
+# IDE
+.vscode/
+.idea/
+*.swp

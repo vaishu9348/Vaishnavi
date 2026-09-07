@@ -1,0 +1,6 @@
+participant_id,role,task_completed,ease_of_use,clarity,privacy_confidence,usefulness,notes
+P-01,Product Manager,YES,5,5,5,5,Clearly identified Document Upload as primary dropout without seeing individual user records.
+P-02,Data Analyst,YES,4,5,5,5,Baseline vs DP comparison shows ε=1.0 retains over 95% ranking accuracy with minimal distortion.
+P-03,Compliance Officer,YES,5,5,5,4,Consent filtering and small group suppression strictly satisfy GDPR and data minimisation standards.
+P-04,Claims Operations Lead,YES,5,4,5,5,Tested analytics outage simulation; legacy claim submissions were 100% unaffected.
+P-05,Security Architect,YES,4,5,5,5,Verified that reverse lookup of anonymous IDs is mathematically blocked.
