@@ -65,7 +65,7 @@ def create_all_notebooks():
     # 02_data_validation.ipynb
     nb2 = make_notebook([
         md_cell("# 02 - Data Validation & PII Sanitization Audit\n\nVerifies zero PII leakage, validates event schema integrity, and audits timestamp bucketization."),
-        code_cell("import sys, os\nsys.path.append('..')\nimport pandas as pd\nfrom privacy.anonymization import PROHIBITED_PII_FIELDS\n\ndf = pd.read_csv('../data/synthetic/interaction_events.csv')\nprint('Total events:', len(df))\n\n# Audit columns against prohibited PII\npii_found = [col for col in df.columns if col.lower() in PROHIBITED_PII_FIELDS]\nprint('Prohibited PII columns found:', pii_found)\nassert len(pii_found) == 0, 'PII Leakage Detected!'\nprint('Zero PII compliance: PASSED ✅')"),
+        code_cell("import sys, os\nsys.path.append('..')\nimport pandas as pd\nfrom privacy.anonymization import PROHIBITED_PII_FIELDS\n\ndf = pd.read_csv('../data/synthetic/interaction_events.csv')\nprint('Total events:', len(df))\n\n# Audit columns against prohibited PII\npii_found = [col for col in df.columns if col.lower() in PROHIBITED_PII_FIELDS]\nprint('Prohibited PII columns found:', pii_found)\nassert len(pii_found) == 0, 'PII Leakage Detected!'\nprint('Zero PII compliance: PASSED [OK]')"),
         code_cell("# Check session tokens format\nvalid_format = df['anonymous_session_id'].str.startswith('ANON-').all()\nprint('All session tokens anonymized:', valid_format)")
     ])
 
@@ -78,7 +78,7 @@ def create_all_notebooks():
     # 04_differential_privacy.ipynb
     nb4 = make_notebook([
         md_cell("# 04 - Differential Privacy Implementation & Noise Calibration\n\nExplores Laplace Mechanism sensitivity calibration, noise distribution, and bounded privacy budgets."),
-        code_cell("import sys, os\nsys.path.append('..')\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom privacy.differential_privacy import LaplaceMechanism\n\nepsilons = [0.1, 0.5, 1.0]\nplt.figure(figsize=(10, 5))\nfor eps in epsilons:\n    dp = LaplaceMechanism(epsilon=eps, sensitivity=1.0, seed=42)\n    samples = [dp.draw_noise() for _ in range(5000)]\n    plt.hist(samples, bins=60, alpha=0.5, density=True, label=f'epsilon={eps} (scale={1/eps:.1f})')\nplt.title('Laplace Noise Distribution by Epsilon')\nplt.xlabel('Noise Value')\nplt.ylabel('Density')\nplt.legend()\nplt.show()")
+        code_cell("import sys, os\nsys.path.append('..')\nimport numpy as np\nimport matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\nfrom privacy.differential_privacy import LaplaceMechanism\n\nepsilons = [0.1, 0.5, 1.0]\nplt.figure(figsize=(10, 5))\nfor eps in epsilons:\n    dp = LaplaceMechanism(epsilon=eps, sensitivity=1.0, seed=42)\n    samples = [dp.draw_noise() for _ in range(5000)]\n    plt.hist(samples, bins=60, alpha=0.5, density=True, label=f'epsilon={eps} (scale={1/eps:.1f})')\nplt.title('Laplace Noise Distribution by Epsilon')\nplt.xlabel('Noise Value')\nplt.ylabel('Density')\nplt.legend()\nplt.savefig('../reports/notebook_laplace_distribution.png')\nplt.close()\nprint('Laplace distribution plot generated successfully.')")
     ])
 
     # 05_accuracy_experiment.ipynb
@@ -90,7 +90,7 @@ def create_all_notebooks():
     # 06_failure_testing.ipynb
     nb6 = make_notebook([
         md_cell("# 06 - Operational Failure Modes & Misuse Security\n\nDemonstrates live execution of the 5 failure modes and 5 privacy misuse tests."),
-        code_cell("import sys, os\nsys.path.append('..')\nimport pandas as pd\nfrom privacy.consent import validate_event_consent\nfrom privacy.suppression import check_and_suppress_count\nfrom privacy.differential_privacy import LaplaceMechanism, InvalidEpsilonError\n\n# Test 1: Missing consent\nassert validate_event_consent(None) is False\nprint('Test 1 Passed: Missing consent rejected ✅')\n\n# Test 2: Small group suppression\nsupp = check_and_suppress_count(3, min_group_size=10)\nassert supp.is_suppressed is True\nprint('Test 2 Passed: Count=3 suppressed ✅')\n\n# Test 3: Budget abuse\ntry:\n    LaplaceMechanism.validate_epsilon(100.0)\nexcept InvalidEpsilonError:\n    print('Test 3 Passed: Epsilon=100 rejected ✅')")
+        code_cell("import sys, os\nsys.path.append('..')\nimport pandas as pd\nfrom privacy.consent import validate_event_consent\nfrom privacy.suppression import check_and_suppress_count\nfrom privacy.differential_privacy import LaplaceMechanism, InvalidEpsilonError\n\n# Test 1: Missing consent\nassert validate_event_consent(None) is False\nprint('Test 1 Passed: Missing consent rejected [OK]')\n\n# Test 2: Small group suppression\nsupp = check_and_suppress_count(3, min_group_size=10)\nassert supp.is_suppressed is True\nprint('Test 2 Passed: Count=3 suppressed [OK]')\n\n# Test 3: Budget abuse\ntry:\n    LaplaceMechanism.validate_epsilon(100.0)\nexcept InvalidEpsilonError:\n    print('Test 3 Passed: Epsilon=100 rejected [OK]')")
     ])
 
     # 07_final_evaluation.ipynb
